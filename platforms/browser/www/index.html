@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+        <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com *; style-src * 'unsafe-inline'; script-src * 'unsafe-inline'; media-src *; img-src 'self' data: https://*.gstatic.com/ data:; frame-src 'self' https://cordova.apache.org; script-src 'self' 'unsafe-inline' 'unsafe-eval'" />
+<!--        <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com; style-src 'self' * 'unsafe-inline'; media-src *; frame-src 'self' https://cordova.apache.org; script-src 'self' 'unsafe-inline' 'unsafe-eval'; media-src *; img-src * data:;">-->
+
+        <title>Covid Tracker India</title>
+        <script type="text/javascript" src="cordova.js"></script>
+        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+        <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+        <script src="Key.js"></script>
+        <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+        <script type="text/javascript">
+        google.charts.load('current', {'packages':['geochart'], 'mapsApiKey': KEY});  
+        var stateDetails;
+        var chartData;
+        var output;
+        var updatedTime;    
+        var settings = {
+                    "async": true,
+                    "crossDomain": true,
+                    "url": "https://corona-virus-world-and-india-data.p.rapidapi.com/api_india",
+                    "method": "GET",
+                    "headers": {
+                        "x-rapidapi-host": "corona-virus-world-and-india-data.p.rapidapi.com",
+                        "x-rapidapi-key": URL_KEY
+                    }
+        };
+        window.onload=function () {
+            document.addEventListener('deviceready', init, false);
+            //init();
+        }
+        
+        function init() {
+            
+            getData();
+        }
+        
+        
+            
+        function getData() {
+            
+            $.ajax(settings).done(function (response) {
+                console.log(response);
+
+                output="";
+                stateDetails = "";
+                chartData = [];
+//                output+="<li> Confirmed Cases : " + response.total_values.confirmed + ",  Deaths : " + response.total_values.deaths + "</li>";
+//                output+="</li>";
+//active: "2812"
+//confirmed: "3127"
+//deaths: "86"
+//delta: {active: 19, confirmed: 19, deaths: 0, recovered: 0}
+//deltaconfirmed: "19"
+//deltadeaths: "0"
+//deltarecovered: "0"
+//lastupdatedtime: "04/04/2020 10:27:24"
+//recovered: "229"
+
+                output +=     '<hr>'                
+                output += '<span align="center">'
+                output +=     '<a align="center" style="color:black;">'
+                output +=         '<b>Confirmed</b>'
+                output +=     '</a>' 
+                output +=     '&nbsp;&nbsp;&nbsp;&nbsp;'
+                output +=     '<a align="center" style="color:Orange;">'
+                output +=         '<b>Active</b>'
+                output +=     '</a>'                
+                output +=     '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+                output +=     '<a align="center" style="color:Tomato;">'
+                output +=         '<b>Deaths</b>'
+                output +=     '</a>'
+                output +=     '&nbsp;&nbsp;&nbsp;&nbsp;'
+                output +=     '<a align="center" style="color:MediumSeaGreen;">'
+                output +=         '<b>Recovered</b>'
+                output +=     '</a>'
+                output += '</span>'                
+                output += '<BR/><BR/>'                
+
+                output +=     '&nbsp;&nbsp;'                
+                output += '<span align="center">'
+                output +=     '<a align="center" style="display: inline-block;border-radius: 3px; color:white;width: 60px;height: 22px; background-color:black;">'
+                output +=         '<b>'+response.total_values.confirmed+'</b>'
+                output +=     '</a>' 
+                output +=     '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+                output +=     '<a align="center" style="display: inline-block;border-radius: 3px; color:white;width: 60px;height: 22px; background-color:Orange;">'
+                output +=         '<b>'+response.total_values.active +'</b>'
+                output +=     '</a>'                
+                output +=     '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+                output +=     '<a align="center" style="display: inline-block;border-radius: 3px; color:white;width: 60px;height: 22px; background-color:Tomato;">'
+                output +=         '<b>'+response.total_values.deaths +'</b>'
+                output +=     '</a>'
+                output +=     '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+                output +=     '<a align="center" style="display: inline-block;border-radius: 3px; color:white;width: 60px;height: 22px; background-color:MediumSeaGreen;">'
+                output +=         '<b>'+response.total_values.recovered+'</b>'
+                output +=     '</a>'
+                output += '</span>'
+                output +=     '<hr>'
+                 
+                $('#summaryDataId').html(output); 
+                $('#dateId').html(response.total_values.lastupdatedtime.split(' ')[0]); 
+
+                
+                
+                
+                
+                chartData.push(['State', 'Confirmed', 'Deaths']);
+                for (var state in response.state_wise) {
+                    var item = response.state_wise[state];
+                    
+                    if(item.state === undefined) continue;
+
+                        chartData.push([item.state, parseInt(item.confirmed), parseInt(item.deaths)]);
+//                        stateDetails += "<tr>";
+//                        stateDetails +=    "<td>"+item.state+"</td>";
+////                        stateDetails +=    "<td>"+item.active+"</td>";
+//                        stateDetails +=    "<td>"+item.confirmed+"</td>";
+//                        stateDetails +=    "<td>"+item.deaths+"</td>";
+//                        stateDetails +=    "<td>"+item.recovered+"</td>";
+//                        stateDetails += "</tr>";
+                            
+
+                            
+                            stateDetails += '<li><p style="font-size:20px;color:dimgrey;">'+item.state+'</p>'
+                            stateDetails += '<span>'
+                            
+                            stateDetails +=     '<a align="center" style="display: inline-block;border-radius: 3px; color:white;width: 40px;height: 22px; background-color:Orange;">'
+                            stateDetails +=         '<b>'+item.active+'</b>'
+                            stateDetails +=     '</a>'
+                            
+                            stateDetails +=     '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+                            stateDetails +=     '<a align="center" style="display: inline-block;border-radius: 3px; color:white;width: 40px;height: 22px; background-color:Tomato;">'
+                            stateDetails +=         '<b>'+item.deaths+'</b>'
+                            stateDetails +=     '</a>'
+                    
+                            stateDetails +=     '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+                            stateDetails +=     '<a align="center" style="display: inline-block;border-radius: 3px; color:white;width: 40px;height: 22px; background-color:MediumSeaGreen;">'
+                            stateDetails +=         '<b>'+item.recovered+'</b>'
+                            stateDetails +=     '</a>'
+                            
+                            stateDetails += '</span>'
+                    
+                            stateDetails += '<span class="ui-li-count">'+item.confirmed+'</span></li>';
+                    
+                };
+                
+                google.charts.setOnLoadCallback(drawVisualization);
+                
+                $('#listviewId').html(stateDetails);
+                try{
+                    $('#listviewId').listview('refresh');    
+                }catch(err) {err.message}
+                
+                
+                setTimeout(function() {
+                        getData();                
+                }, 120000);
+
+            });
+        }
+
+        function drawVisualization() {
+          var data = google.visualization.arrayToDataTable(chartData);
+          var opts = {
+            region: 'IN',
+            displayMode: 'regions',
+            resolution: 'provinces',
+            domain: 'IN',
+            legend: 'none',
+            keepAspectRatio:false,  
+            colorAxis: {colors: ['#fff3ed', '#ff5500']}, 
+            width: 650,
+//            height: 500
+              tooltip: {isHtml: true}
+          };
+          var geochart = new google.visualization.GeoChart(document.getElementById('chart-div'));
+          geochart.draw(data, opts);
+        }
+
+    </script>
+        <style>
+            #footer 
+            {
+                position: fixed;
+                bottom: 0;
+                width: 100%;
+            }
+
+
+            #chart-div {
+                left: -150px;
+                width: 600;
+                height: 500;
+                position: relative;
+                display: flex;
+                flex-wrap: wrap;
+                align-content: center;
+
+
+            }
+            .google-visualization-tooltip {margin-left: 100px !important;}
+
+        </style>
+
+        
+        
+    </head>
+    <body>
+        <div data-role="page" id="page1">
+            <div data-role="header" data-theme="b" data-position="fixed"  background="Covid-white.jpg">
+<!--                <h1>Covid-19 India</h1>-->
+                <div align="center"><img src="covid.jpg" width="25px"/><a style="color: whitesmoke">Covid Tracker</a></div>
+            </div> <!-- header -->
+
+            <div data-role="main" class="ui-content">
+                <div id="myElement" class="container">Hello!!</div>
+                <div id="chart-div"></div>
+                <div class="article">
+                    <span><img src="in.png" width="20">&nbsp;<a style="">Total Cases Test</a>&nbsp;<i><small id="dateId" style="color:gray;">as of </small></i></span>
+                    <p id="summaryDataId"></p>
+                    <p><a href="#right-panel" class="ui-btn ui-shadow ui-corner-all ui-btn-inline ui-mini">World</a></p>
+                </div><!-- /article -->
+
+            </div> <!-- main -->
+
+            <div data-role="footer" style="overflow:hidden;" data-theme="a" data-position="fixed" class="ui-state-persist" id="footer" align="center">
+<!--                <button onclick="location.href='index.html#page1'">Map View</button>-->
+                <div data-role="navbar" data-iconpos="top">
+                    <ul>
+                        <li><a data-icon="location">Map View</a></li>
+<!--                        <li><a href="#" data-icon="star" class="ui-btn-active">Favs</a></li>-->
+                        <li><a href="index.html#page2" data-icon="bullets">List View</a></li>
+                    </ul>
+                </div><!-- /navbar -->
+            </div><!-- /footer -->
+            <!-- footer -->
+        </div> <!-- page -->
+
+ 
+        <div data-role="page" id="page2">
+            <div data-role="header" data-theme="b" data-position="fixed">
+<!--                <h1>Covid-19 India</h1>-->
+                <div align="center"><img src="covid.jpg" width="25px"/><a style="color: whitesmoke">Covid Tracker</a></div>
+                <form style="padding-left: 10px;padding-right: 10px;">
+                    <input id="filterTable-input" data-type="search" placeholder="Search state..." data-theme="a">
+                </form>
+            </div> <!-- header -->
+            <div data-role="main" class="ui-content">
+                
+                
+                <div class="listCont" id="listContId">
+                <ul data-role="listview" data-theme="a" data-count-theme="b" class="ui-responsive"
+                    data-inset="true" id="listviewId" data-filter="true" data-input="#filterTable-input"></ul>
+                </div> <!--listContId   -->
+            </div> <!-- main -->
+            <div data-role="footer" style="overflow:hidden;" data-theme="a" data-position="fixed" class="ui-state-persist" id="footer" align="center">
+<!--                <button onclick="location.href='index.html#page1'">Map View</button>-->
+                <div data-role="navbar" data-iconpos="top">
+                    <ul>
+                        <li><a href="index.html#page1" data-icon="location">Map View</a></li>
+<!--                        <li><a href="#" data-icon="star" class="ui-btn-active">Favs</a></li>-->
+                        <li><a data-icon="bullets">List View</a></li>
+                    </ul>
+                </div><!-- /navbar -->
+            </div><!-- /footer -->
+        </div> <!-- page -->
+        
+        
+        
+    </body>
+</html>

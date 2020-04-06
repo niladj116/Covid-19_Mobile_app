@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="com.homelink.covid19" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0" xmlns:gap="http://phonegap.com/ns/1.0">
+    <name>covid-19</name>
+    <description>
+        A simple Covid-19 (Corona Virus) tracker for India
+    </description>
+    <author email="niladri.sadhukhan@gmail.com" href="https://covid-19report.info">
+        homelink s/w
+    </author>
+    <content src="index.html" />
+    <allow-navigation href="*" />
+    <access origin="content:///*" />
+    <access origin="*" />
+    <allow-intent href="http://*/*" />
+    <allow-intent href="https://*/*" />
+    <allow-intent href="tel:*" />
+    <allow-intent href="sms:*" />
+    <allow-intent href="mailto:*" />
+    <allow-intent href="geo:*" />
+    <preference name="KeepRunning" value="false" />
+    <preference name="LoadUrlTimeoutValue" value="10000" />
+    <preference name="InAppBrowserStorageEnabled" value="true" />
+    <preference name="LoadingDialog" value="My Title,My Message" />
+    <preference name="ErrorUrl" value="myErrorPage.html" />
+    <preference name="ShowTitle" value="true" />
+    <preference name="LogLevel" value="VERBOSE" />
+    <preference name="AndroidLaunchMode" value="singleTop" />
+    <preference name="DefaultVolumeStream" value="call" />
+    <preference name="OverrideUserAgent" value="Mozilla/5.0 My Browser" />
+    <preference name="AppendUserAgent" value="My Browser" />
+</widget>
